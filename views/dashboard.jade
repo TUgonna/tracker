@@ -1,0 +1,176 @@
+doctype html
+html
+  head
+    title Issue Tracker
+    script(type='text/javascript', src='//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js')
+    script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js')
+    script(type='text/javascript', src='./firebasefunctions.js')
+    script(type='text/javascript', src='https://cdn.firebase.com/js/client/1.0.15/firebase.js')
+    link(rel='stylesheet', type='text/css', href='css/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', href='css/bootstrap.css')
+    link(rel='stylesheet', type='text/css', href='css/style.css')
+    link(href='css/metisMenu.min.css', rel='stylesheet')
+    link(href='css/timeline.css', rel='stylesheet')
+    link(href='css/startmin.css', rel='stylesheet')
+    // Morris Charts CSS
+    link(href='css/morris.css', rel='stylesheet')
+    script(src='app.js')
+    script(src='js/session.js')
+    script(src='js/app.js')
+    script(src='https://www.gstatic.com/firebasejs/3.6.3/firebase.js')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+    script(type='text/javascript').
+      function checkCookies(){
+      document.getElementById('usernametop').innerHTML= "ugo";
+      }
+  body(onload='checkCookie()')
+    header.row
+      nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+        .navbar-header
+          a.navbar-brand(href='#') ISSUE TRACKER
+        button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        // Top Navigation: Right Menu
+        ul.nav.navbar-right.navbar-top-links
+          li.dropdown.navbar-inverse
+            a.dropdown-toggle(data-toggle='dropdown', href='#')
+              i.fa.fa-bell.fa-fw
+              b.caret
+            ul.dropdown-menu.dropdown-alerts
+              li
+                a(href='#')
+                  div
+                    i.fa.fa-comment.fa-fw
+                    |  New Comment
+                    span.pull-right.text-muted.small 4 minutes ago
+              li.divider
+              li
+                a.text-center(href='#')
+                  strong See All Alerts
+                  i.fa.fa-angle-right
+          li.dropdown
+            a.dropdown-toggle(data-toggle='dropdown', href='#')
+              i.fa.fa-user.fa-fw
+              span #{user}  
+              b.caret
+            ul.dropdown-menu.dropdown-user
+              li.divider
+              li
+                form(action='/logout', method='post')
+                  button#logout-submit(name='logout-submit', value='Log Out', onclick='') Log Out
+        // Sidebar
+        .navbar-default.sidebar(role='navigation', hidden='')
+          .sidebar-nav.navbar-collapse
+            ul#side-menu.nav
+              li.sidebar-search
+                .input-group.custom-search-form
+                  input.form-control(type='text', placeholder='Search...')
+                  span.input-group-btn
+                    button.btn.btn-primary(type='button')
+                      i.fa.fa-search
+              li
+                a.active(href='#')
+                  i.fa.fa-dashboard.fa-fw
+                  |  Create Issue
+    .content.row.col-md-offset-1.col-md-10
+      .col-md-12
+        .col-md-2
+          h1 TICKETS
+        .col-md-8
+        .col-md-2
+          button#createTicketBtn New Ticket
+      .col-md-12
+        form.searchform
+          input(type='text', name='searchtext', placeholder='Search Ticket')
+          button.searchbtn.fa.fa-search
+      .col-md-12
+        pre
+            each p in post
+              
+              .table-responsive
+                 table#mytable.table.table-striped
+                   thead
+                      th 
+                      th Status
+                      th Description
+          
+                      th Raised by
+                      th Priority
+                      th Date Created
+                      th Last Updated
+                      th Edit
+                   tbody
+                       tr
+                         td
+                           input.checkthis(type='checkbox')
+                         td=p.status
+                         td=p.desc
+                         
+                         td=p.user 
+                         td=p.prior 
+                         td=p.date 
+                         td=p.update
+                         
+                         td 
+                 
+                           p(data-placement='top', data-toggle='tooltip', title='Edit')
+                             button.btn.btn-primary.btn-xs(data-title='Edit', data-toggle='modal', data-target='#edit')
+                               span.glyphicon.glyphicon-pencil
+    .col-md-1
+    div
+      form#createIssue(style='display:none', method='post', action='/create')
+        h1 Create Issue
+        .form-group
+          label Department
+          select#issueDept.form-control(name='issueDept')
+            option(value='fin') Finance
+            option(value='sal') Sales
+            option(value='tec') Technical
+        .form-group
+          label Priority
+          select#issuePriority.form-control(name='issuePriority')
+            option(value='low') Low
+            option(value='med') Medium
+            option(value='high') High
+        .form-group
+          label Description
+          textarea#issueDesc.form-control(name='issueDesc')
+        .form-group
+          .row.col-md-12
+            .col-md-6
+              button#createIssueBtn.form-control.btn(name='createIssueBtn', value='Create') Create
+            .col-md-6
+              a#cancelCreate.form-control.btn(name='cancelCreate', value='Create') Cancel
+    footer.row
+    script(type='text/javascript').
+      function myFunction() {
+      document.getElementById("myDropdown").classList.toggle("show");
+      }
+      // Close the dropdown menu if the user clicks outside of it
+      window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+      openDropdown.classList.remove('show');
+      }
+      }
+      }
+      }
+      window.onload = function(event) {
+      document.getElementById("createTicketBtn").onclick = function (){
+      var showDiv = document.getElementById("createIssue");
+      showDiv.style.display = "block";
+      };
+      document.getElementById("cancelCreate").onclick = function (){
+      var showDiv = document.getElementById("createIssue");
+      showDiv.style.display = "none";
+      };
+      }
+
+
