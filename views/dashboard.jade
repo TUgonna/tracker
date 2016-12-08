@@ -87,10 +87,7 @@ html
           input(type='text', name='searchtext', placeholder='Search Ticket')
           button.searchbtn.fa.fa-search
       .col-md-12
-        pre
-            each p in post
-              
-              .table-responsive
+         .table-responsive
                  table#mytable.table.table-striped
                    thead
                       th 
@@ -103,11 +100,15 @@ html
                       th Last Updated
                       th Edit
                    tbody
+                     each p in post
+              
+             
                        tr
                          td
                            input.checkthis(type='checkbox')
                          td=p.status
-                         td=p.desc
+                         td(width=950)
+                           textarea(disabled='')=p.desc
                          
                          td=p.user 
                          td=p.prior 

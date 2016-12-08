@@ -73,7 +73,7 @@ function requireLogin(req, res, next) {
 
 }
 
-// app.use('/dashboard', requireLogin);
+app.use('/dashboard', requireLogin);
 
 // app.use('/dashboard', dashboard);
 // app.use('/login', login);
