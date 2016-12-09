@@ -7,6 +7,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+
 var firebase = require('firebase');
 
 var config = {
@@ -23,7 +24,7 @@ var ref = db.ref("tickets");
 
 
 
-
+var provider = new firebase.auth.FacebookAuthProvider();
 var index = require('./routes/index');
 var users = require('./routes/users');
 var login = require('./routes/login');
@@ -80,6 +81,18 @@ function requireLogin(req, res, next) {
       res.redirect('/');
   }
 
+}
+
+function facebookSignin() {
+  firebase.auth().signInWithRedirect(provider);
+}
+
+function facebookSignout() {
+  firebase.auth().signOut().then(function() {
+  // Sign-out successful.
+}, function(error) {
+  // An error happened.
+});
 }
 
 app.use('/dashboard', requireLogin);
@@ -149,25 +162,11 @@ var twoDigitMonth = ((fullDate.getMonth().length+1) === 1)? (fullDate.getMonth()
 var currentDate = fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear();
 
 var body = req.body;
-  var param = {
-    user: req.session['user'],
-  status: "resolved",
-  desc:body.issueDesc,
-  prior:body.issuePriority,
-  dept:body.issueDept,
-  date: currentDate,
-  tktid:"hWJywl7w",
-  update: currentDate
-  };
-  var newPostKey = firebase.database().ref().child('tickets').push().key;
+  
+firebase.database().ref().child('tickets').child(body.uid).update({status:body.updateStatus, update: currentDate});
 
-  // Write the new post's data simultaneously in the posts list and the user's post list.
-  var updates = {};
-  updates['/tickets/' + newPostKey] = postData;
-  updates['/status/' + tktid + '/' + newPostKey] = postData;
-
-  return firebase.database().ref().update(updates);
-
+  res.redirect('/dashboard');
+ 
 });
 
 
