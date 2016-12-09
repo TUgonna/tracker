@@ -8,6 +8,8 @@ router.get('/', function(req, res, next) {
 		for (keys in post){
 			post[keys].uid=keys;
 		}
+
+
 		
 res.render('dashboard' , {user: req.session['user'], post:post});
 		// res.send(snapshot.key());
