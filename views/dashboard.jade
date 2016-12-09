@@ -82,44 +82,44 @@ html
         .col-md-8
         .col-md-2
           button#createTicketBtn New Ticket
-      .col-md-12
-        form.searchform
-          input(type='text', name='searchtext', placeholder='Search Ticket')
-          button.searchbtn.fa.fa-search
-      .col-md-12
-         .table-responsive
-                 table#mytable.table.table-striped
-                   thead
-                      th 
-                      th Status
-                      th Description
-          
-                      th Raised by
-                      th Priority
-                      th Date Created
-                      th Last Updated
-                      th Edit
-                   tbody
-                     each p in post
-              
-             
-                       tr
-                         td
-                           input.checkthis(type='checkbox')
-                         td=p.status
-                         td(width=950)
-                           textarea(disabled='')=p.desc
-                         
-                         td=p.user 
-                         td=p.prior 
-                         td=p.date 
-                         td=p.update
-                         
-                         td 
+      
+       .col-md-12
+        #issues
+          table.table.table-striped.col-md-12
+            thead
+              tr
                  
-                           p(data-placement='top', data-toggle='tooltip', title='Edit')
-                             button.btn.btn-primary.btn-xs(data-title='Edit', data-toggle='modal', data-target='#edit')
-                               span.glyphicon.glyphicon-pencil
+                th Status
+                th Description
+                th Ticket ID
+                th Raised by
+                th Priority
+                th Due date
+                th Last Updated
+                th
+            tbody
+              each p in post
+                form#updateForm(action="/update" method="post") 
+                  tr
+                    td
+                      select#updateStatus(name="updateStatus")
+                        option(value=p.status)=p.status
+                        option(value="in progress") in progress
+                        option(value="resolved") resolved
+                    td
+                      textarea#updateDesc(disabled name="updateDesc")=p.desc
+                    td
+                      input#updateId(type="text" disabled name="updateId" value=p.tktid)
+                    td
+                      input#updateUser(type="text" disabled name="updateUser" value=p.user) 
+                    td
+                      input#updatePrior(type="text" disabled name="updatePrior" value=p.prior)
+                    td
+                      input#updateCreateDate(type="text" disabled name="updateCreateDate" value=p.date)
+                    td
+                      input#updateDate(type="text" disabled name="updateDate" value=p.update)
+                    td 
+                      input.btn(type="submit" value="Update" style="width:90px;")
     .col-md-1
     div
       form#createIssue(style='display:none', method='post', action='/create')
@@ -145,6 +145,44 @@ html
               button#createIssueBtn.form-control.btn(name='createIssueBtn', value='Create') Create
             .col-md-6
               a#cancelCreate.form-control.btn(name='cancelCreate', value='Create') Cancel
+    div
+      form#updateIssue(method='post', action='/update' style="display:none")
+        h1 Edit Issue
+        .form-group
+          label Date Created
+          input#dateCreated.form-control(name='dateCreated', disabled)
+        .form-group
+          label User
+          input#userUpdate.form-control(name='userUpdate', disabled)
+        .form-group
+          label Status
+          select#statusUpdate.form-control(name='statusUpdate')
+            option(value='open') in progress
+            option(value='closed') resolved
+        .form-group
+          label Department
+          select#deptUpdate.form-control(disabled='', name="deptUpdate")
+            option(value='fin') Finance
+            option(value='sal') Sales
+            option(value='tec') Technical
+        .form-group
+          label Priority
+          select#priorUpdate.form-control(disabled='', name="priorUpdate")
+            option(value='low') Low
+            option(value='med') Medium
+            option(value='high') High
+        .form-group
+          label Description
+          textarea#descUpdate.form-control(disabled='', name="descUpdate")
+        .form-group
+          label Comments
+          textarea#issueComment.form-control(name='issueComment')
+        .form-group
+          .row.col-md-12
+            .col-md-6
+              button#updateIssueBtn.form-control.btn(name='updateIssueBtn', value='Create') Create
+            .col-md-6
+              a#cancelUpdate.form-control.btn(name='cancelUpdate', value='Create') Cancel
     footer.row
     script(type='text/javascript').
       function myFunction() {
@@ -172,6 +210,21 @@ html
       var showDiv = document.getElementById("createIssue");
       showDiv.style.display = "none";
       };
+
+      function update(post){
+      console.log(post);
+      var showDiv = document.getElementById("updateIssue");
+      showDiv.style.display = "block";
+      };
+      document.getElementsById("cancelUpdate").onclick = function (){
+      var showDiv = document.getElementById("updateIssue");
+      showDiv.style.display = "none";
+      };
+      
+
+
+
+
       }
 
 

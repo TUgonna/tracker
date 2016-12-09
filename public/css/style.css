@@ -113,7 +113,9 @@ padding: 50px;
 	padding-left:20px; 
 }
 
-.searchform button {
+.searchform input[type="submit"] {
+	width:20%;
+	margin-top:-4px;
 	background: #193d3c;
 	color: white;
 	border:none;
@@ -378,7 +380,7 @@ a{
 	margin-top: 50px;
 }
 
-#createIssue {
+#createIssue, #updateIssue {
 	background: white;
 	width:45%;
 	height: auto;
@@ -393,12 +395,15 @@ a{
 	box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
 }
 
-#createIssue textarea{
-	height: 200px;
+#createIssue textarea, #updateIssue  textarea{
+	height: 100px;
 }
 
-#createIssueBtn, #cancelCreate {
+#createIssueBtn, #cancelCreate, #updateIssueBtn,  #cancelUpdate{
 	color: black;
 	border: 1px groove white;
 }
 
+#updateForm tr{
+	width:90px; !important
+}

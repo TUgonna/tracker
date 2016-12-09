@@ -3,10 +3,11 @@ var router = express.Router();
 var firebase = require('firebase');
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	firebase.database().ref("tickets").on("value", function(snapshot){
+	firebase.database().ref("tickets").orderByChild("user").equalTo(req.session['user']).on("value", function(snapshot){
 		var post =snapshot.val();
-		res.render('dashboard' , {user: req.session['user'], post:post});
-		// res.send(snapshot.val());
+		
+res.render('dashboard' , {user: req.session['user'], post:post});
+		// res.send(snapshot.key());
 	});
 	
   
