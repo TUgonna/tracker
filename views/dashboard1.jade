@@ -67,7 +67,7 @@ html
           h1 TICKETS
         .col-md-7
         .col-md-2
-          button#createTicketBtn New Ticket
+          
       
        
         #issues
@@ -82,13 +82,13 @@ html
                 th Priority
                 th Due date
                 th Last Updated
-                
+                th
             tbody
               each p in post
                 form#updateForm(action="/update" method="post") 
                   tr
                     td
-                      select#updateStatus(name="updateStatus", disabled)
+                      select#updateStatus(name="updateStatus")
                         option(value=p.status)=p.status
                         option(value="in progress") in progress
                         option(value="resolved") resolved
@@ -106,7 +106,8 @@ html
                       input#updateDate(type="text" disabled name="updateDate" value=p.update)
                     td
                       input#uid(type="text" hidden name="uid" value=p.uid)
-                    
+                    td 
+                      input.btn(type="submit" value="Update" style="width:90px;")
                       
 
     .col-md-1

@@ -16,8 +16,8 @@ var config = {
     databaseURL: "https://issuetracker-eda61.firebaseio.com",
     storageBucket: "issuetracker-eda61.appspot.com",
     messagingSenderId: "351839136232"
-  };
-  firebase.initializeApp(config);
+};
+firebase.initializeApp(config);
 
 var db = firebase.database();
 var ref = db.ref("tickets");
@@ -29,13 +29,14 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var login = require('./routes/login');
 var dashboard = require('./routes/dashboard');
+var dashboard1 = require('./routes/dashboard1');
 var app = express();
 
 app.use(session({
-  secret: '1234567',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {}
+    secret: '1234567',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {}
 }));
 
 
@@ -54,7 +55,9 @@ app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -62,111 +65,143 @@ app.use('/', index);
 app.use('/users', users);
 
 function randomString() {
-  var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-  var string_length = 8;
-  var randomstring = '';
-  for (var i=0; i<string_length; i++) {
-    var rnum = Math.floor(Math.random() * chars.length);
-    randomstring += chars.substring(rnum,rnum+1);
-  }
-  return randomstring;
+    var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+    var string_length = 8;
+    var randomstring = '';
+    for (var i = 0; i < string_length; i++) {
+        var rnum = Math.floor(Math.random() * chars.length);
+        randomstring += chars.substring(rnum, rnum + 1);
+    }
+    return randomstring;
 }
 
 
 function requireLogin(req, res, next) {
-  if (req.session.user) {
-    next();
-  }
-  else {
-      res.redirect('/');
-  }
+    if (req.session.user) {
+        return next();
+    } else {
+        return res.redirect('/');
+
+    }
 
 }
 
 function facebookSignin() {
-  firebase.auth().signInWithRedirect(provider);
+    firebase.auth().signInWithRedirect(provider);
 }
 
 function facebookSignout() {
-  firebase.auth().signOut().then(function() {
-  // Sign-out successful.
-}, function(error) {
-  // An error happened.
-});
+    firebase.auth().signOut().then(function() {
+        // Sign-out successful.
+    }, function(error) {
+        // An error happened.
+    });
 }
 
-app.use('/dashboard', requireLogin);
 
-// app.use('/dashboard', dashboard);
-// app.use('/login', login);
-// app.use(function(req, res, next) {
-//     if (req.session.user == null){
-// // if user is not logged-in redirect back to login page //
-//         res.redirect('/');
-//     }   else{
-//         next();
-//     }
-// });
 
-  app.use('/dashboard', dashboard);
-    app.use('/login', login);
+app.use('/dashboard', requireLogin, dashboard);
+app.use('/dashboard1', dashboard1);
+app.use('/login', login);
 
 app.post('/login', function(req, res, next) {
 
-  var body = req.body;
-  firebase.auth().signInWithEmailAndPassword(body.email1, body.password1).then(function (response) {
-    req.session['user'] = response.email;
-    ref.on("value", function(snapshot) {
-   
-}, function (error) {
-   console.log("Error: " + error.code);
-});
-  res.redirect('/dashboard');
-  }).catch(function(error){
-    res.render('login' , {error:error});
+    var body = req.body;
+    firebase.auth().signInWithEmailAndPassword(body.email1, body.password1).then(function(response) {
+        req.session['user'] = response.email;
+        ref.once("value", function(snapshot) {
 
-  
-  });
+            firebase.database().ref("admins").orderByChild("email").equalTo(req.session['user']).once("value", function(snapshot) {
+                var post = snapshot.val();
+              
+                
+
+                for (keys in post) {
+                    post[keys].uid = keys;
+                }
+
+                if(post){
+
+                  res.redirect('/dashboard1');
+                  return true;
+                }
+                else
+                {
+                  res.redirect('/dashboard');
+                }
+            
+                // res.send(snapshot.key());
+
+
+            });
+           
+
+        }, function(error) {
+            console.log("Error: " + error.code);
+        });
+
+
+
+
+        
+
+    }).catch(function(error) {
+        res.render('login', {
+            error: error
+        });
+
+
+    });
 
 });
 
 app.post('/create', function(req, res, next) {
-  var fullDate = new Date();
+  console.log(req.session['user'], "==================================");
+    var fullDate = new Date();
 
-var twoDigitMonth = ((fullDate.getMonth().length+1) === 1)? (fullDate.getMonth()+1) : '0' + (fullDate.getMonth()+1);
- 
-var currentDate = fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear();
+    var twoDigitMonth = ((fullDate.getMonth().length + 1) === 1) ? (fullDate.getMonth() + 1) : '0' + (fullDate.getMonth() + 1);
 
-var body = req.body;
-  var param = {
-    user: req.session['user'],
-  status: "new",
-  desc:body.issueDesc,
-  prior:body.issuePriority,
-  dept:body.issueDept,
-  date: currentDate,
-  update: currentDate,
-  tktid: randomString()
-  };
-   var x=ref.push(param).key;
+    var currentDate = fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear();
+
+    var body = req.body;
+    var param = {
+        user: req.session['user'],
+        status: "new",
+        desc: body.issueDesc,
+        prior: body.issuePriority,
+        dept: body.issueDept,
+        date: currentDate,
+        update: currentDate,
+        tktid: randomString()
+    };
+
+    ref.push(param);
     
-  res.redirect('/dashboard');
+       res.redirect('/dashboard');
+       // return next();
+    
+
+    
+    
 
 });
 
 app.post('/update', function(req, res, next) {
-  var fullDate = new Date();
+    var fullDate = new Date();
 
-var twoDigitMonth = ((fullDate.getMonth().length+1) === 1)? (fullDate.getMonth()+1) : '0' + (fullDate.getMonth()+1);
- 
-var currentDate = fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear();
+    var twoDigitMonth = ((fullDate.getMonth().length + 1) === 1) ? (fullDate.getMonth() + 1) : '0' + (fullDate.getMonth() + 1);
 
-var body = req.body;
-  
-firebase.database().ref().child('tickets').child(body.uid).update({status:body.updateStatus, update: currentDate});
+    var currentDate = fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear();
 
-  res.redirect('/dashboard');
- 
+    var body = req.body;
+
+    firebase.database().ref().child('tickets').child(body.uid).update({
+        status: body.updateStatus,
+        update: currentDate
+    });
+
+    res.redirect('/dashboard1');
+
 });
 
 
@@ -180,13 +215,13 @@ firebase.database().ref().child('tickets').child(body.uid).update({status:body.u
 
 
 app.post('/logout', function(req, res, next) {
-  firebase.auth().signOut().then(function() {
-    req.session.destroy();
-    res.redirect('/');
-}, function(error) {
-  res.send('Sign Out Error');
-});
- 
+    firebase.auth().signOut().then(function() {
+        req.session.destroy();
+        res.redirect('/');
+    }, function(error) {
+        res.send('Sign Out Error');
+    });
+
 });
 
 // app.post('/create', function(req, res, next) {
@@ -199,19 +234,27 @@ app.post('/logout', function(req, res, next) {
 
 
 app.post('/register', function(req, res, next) {
-var body = req.body;
+    var body = req.body;
 
-if(body.confirmpassword==body.password){
-firebase.auth().createUserWithEmailAndPassword(body.email, body.password).then(function (response) {
-  res.redirect('/dashboard');
-  }).catch(function(error){
-    res.send(error);
-  
-  });
-}
-else {
-  return false;
-}
+    if (body.confirmpassword == body.password) {
+        firebase.auth().createUserWithEmailAndPassword(body.email, body.password).then(function(response) {
+
+            if (body.role == "admin") {
+                firebase.database().ref().child('admins').push({
+                    email: body.email
+                });
+            }
+
+            res.redirect('/dashboard');
+        }).catch(function(error) {
+            res.render('login', {
+                error: error
+            });
+
+        });
+    } else {
+        return false;
+    }
 });
 
 
@@ -235,20 +278,20 @@ else {
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;

@@ -5,14 +5,14 @@ var firebase = require('firebase');
 router.get('/', function(req, res, next) {
 
 
-	firebase.database().ref("tickets").orderByChild("user").equalTo(req.session['user']).once("value", function(snapshot){
+	firebase.database().ref("tickets").on("value", function(snapshot){
 		var post =snapshot.val();
 		for (keys in post){
 			post[keys].uid=keys;
 		}
 
 		
-res.render('dashboard' , {user: req.session['user'], post:post});
+res.render('dashboard1' , {user: req.session['user'], post:post});
 		// res.send(snapshot.key());
 	});
 	
