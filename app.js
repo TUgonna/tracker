@@ -87,6 +87,7 @@ app.use('/dashboard', requireLogin);
 // });
 
   app.use('/dashboard', dashboard);
+    app.use('/login', login);
 
 app.post('/login', function(req, res, next) {
 
@@ -100,7 +101,8 @@ app.post('/login', function(req, res, next) {
 });
   res.redirect('/dashboard');
   }).catch(function(error){
-    res.send(error);
+    res.render('login' , {error:error});
+
   
   });
 
@@ -123,11 +125,11 @@ var body = req.body;
   date: currentDate,
   update: currentDate
   };
-   ref.push(param).then(function() {
-  res.redirect('/dashboard');
-}).catch(function(error) {
-    res.send(error);
-});
+   var x=ref.push(param).key;
+    
+    res.send(x);
+  // res.redirect('/dashboard');
+
 });
 
 

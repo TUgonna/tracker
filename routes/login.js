@@ -7,8 +7,8 @@ var bodyParser = require('body-parser');
 
 
 /* GET home page. */
-router.post('/login', function(req, res, next) {
-	  
+router.get('/', function(req, res, next) {
+  res.render('index');
 });
 
 module.exports = router;

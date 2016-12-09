@@ -1,0 +1,137 @@
+doctype html
+html
+  head
+    title Issue Tracker
+    script(type='text/javascript', src='//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js')
+    link(rel='stylesheet', type='text/css', href='css/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', href='css/bootstrap.css')
+    link(rel='stylesheet', type='text/css', href='css/style.css')
+    link(href='css/metisMenu.min.css', rel='stylesheet')
+    link(href='css/timeline.css', rel='stylesheet')
+    link(href='css/startmin.css', rel='stylesheet')
+    // Morris Charts CSS
+    link(href='css/morris.css', rel='stylesheet')
+    script(src='app.js')
+    script(src='js/app.js')
+    script(src='https://www.gstatic.com/firebasejs/3.6.3/firebase.js')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+  body
+    header.row
+      nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+        .navbar-header
+          a.navbar-brand(href='#') ISSUE TRACKER
+        button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        // Top Navigation: Right Menu
+        // Sidebar
+        .navbar-default.sidebar(role='navigation', hidden='')
+          .sidebar-nav.navbar-collapse
+            ul#side-menu.nav
+              li.sidebar-search
+                .input-group.custom-search-form
+                  input.form-control(type='text', placeholder='Search...')
+                  span.input-group-btn
+                    button.btn.btn-primary(type='button')
+                      i.fa.fa-search
+              li
+                a.active(href='#')
+                  i.fa.fa-dashboard.fa-fw
+                  |  Create Issue
+    .content.row
+      .col-md-6.col-md-offset-3
+        .panel.panel-login
+          .panel-heading
+            .row
+              .col-xs-6
+                a#login-form-link.active(href='#') Login
+              .col-xs-6
+                a#register-form-link(href='#') Register
+            hr
+          .panel-body
+            .row
+              .col-lg-12
+                form#login-form(style='display: block;', action='/login', method='post')
+                  .form-group
+                    input#email1.form-control(type='email', name='email1', tabindex='1', placeholder='Email Address', value='')
+                  .form-group
+                    input#password1.form-control(type='password', name='password1', tabindex='2', placeholder='Password')
+                  .form-group
+                    .row
+                      .col-sm-6.col-sm-offset-3
+                        button#login-submit.form-control.btn.btn-register(name='login-submit', tabindex='4', value='Log In', onclick='') Log In
+                  label#error(style='color:red;') #{error}
+                form#register-form(style='display: none;', method='post', action='/register')
+                  .form-group
+                    input#email.form-control(type='email', name='email', tabindex='1', placeholder='Email Address', value='')
+                  .form-group
+                    select#role.form-control(name='role')
+                      option(value='admin') Admin
+                      option(value='subscriber') Subscriber
+                  .form-group
+                    input#password.form-control(type='password', name='password', tabindex='2', placeholder='Password')
+                  .form-group
+                    input#confirm-password.form-control(type='password', name='confirmpassword', tabindex='2', placeholder='Confirm Password')
+                  .form-group
+                    .row
+                      .col-sm-6.col-sm-offset-3
+                        button#register-submit.form-control.btn.btn-register(name='register-submit', tabindex='4', value='Register Now') Register Now
+    footer.row
+    script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js')
+    script(type='text/javascript', src='//code.jquery.com/jquery-2.1.3.min.js')
+    script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js')
+    script(type='text/javascript', src='./firebasefunctions.js')
+    script(type='text/javascript', src='https://cdn.firebase.com/js/client/1.0.15/firebase.js')
+    script.
+      $('#toggle-login').click(function(){
+      $('#login').toggle();
+      });
+    script(type='text/javascript').
+      function myFunction() {
+      document.getElementById("myDropdown").classList.toggle("show");
+      }
+      // Close the dropdown menu if the user clicks outside of it
+      window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+      openDropdown.classList.remove('show');
+      }
+      }
+      }
+      }
+    script(type='text/javascript', src='app.js')
+    script(type='text/javascript').
+      $(function() {
+      $('#login-form-link').click(function(e) {
+      $("#login-form").delay(100).fadeIn(100);
+      $("#register-form").fadeOut(100);
+      $('#register-form-link').removeClass('active');
+      $(this).addClass('active');
+      e.preventDefault();
+      });
+      $('#register-form-link').click(function(e) {
+      $("#register-form").delay(100).fadeIn(100);
+      $("#login-form").fadeOut(100);
+      $('#login-form-link').removeClass('active');
+      $(this).addClass('active');
+      e.preventDefault();
+      });
+      });
+    script(type='text/javascript').
+      // var firebase = require('firebase');
+      var config = {
+      apiKey: "AIzaSyDuN91VA8zbUEWquDJamzDHo2BT5l3yxPU",
+      authDomain: "issuetracker-eda61.firebaseapp.com",
+      databaseURL: "https://issuetracker-eda61.firebaseio.com",
+      storageBucket: "issuetracker-eda61.appspot.com",
+      messagingSenderId: "351839136232"
+      };
+      firebase.initializeApp(config);
+      var db = firebase.database();
+      var firebaseref = db.ref("tickets");
