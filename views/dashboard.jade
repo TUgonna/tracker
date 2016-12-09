@@ -84,28 +84,29 @@ html
                 th Last Updated
                 
             tbody
-              each p in post
-                form#updateForm(action="/update" method="post") 
-                  tr
-                    td
-                      select#updateStatus(name="updateStatus", disabled)
-                        option(value=p.status)=p.status
-                        option(value="in progress") in progress
-                        option(value="resolved") resolved
-                    td
-                      textarea#updateDesc(disabled name="updateDesc")=p.desc
-                    td
-                      input#updateId(type="text" disabled name="updateId" value=p.tktid)
-                    td
-                      input#updateUser(type="text" disabled name="updateUser" value=p.user) 
-                    td
-                      input#updatePrior(type="text" disabled name="updatePrior" value=p.prior)
-                    td
-                      input#updateCreateDate(type="text" disabled name="updateCreateDate" value=p.date)
-                    td
-                      input#updateDate(type="text" disabled name="updateDate" value=p.update)
-                    td
-                      input#uid(type="text" hidden name="uid" value=p.uid)
+              if post
+                each p in post
+                  form#updateForm(action="/update" method="post") 
+                    tr
+                      td
+                        select#updateStatus(name="updateStatus", disabled)
+                          option(value=p.status)=p.status
+                          option(value="in progress") in progress
+                          option(value="resolved") resolved
+                      td
+                        textarea#updateDesc(disabled name="updateDesc")=p.desc
+                      td
+                        input#updateId(type="text" disabled name="updateId" value=p.tktid)
+                      td
+                        input#updateUser(type="text" disabled name="updateUser" value=p.user) 
+                      td
+                        input#updatePrior(type="text" disabled name="updatePrior" value=p.prior)
+                      td
+                        input#updateCreateDate(type="text" disabled name="updateCreateDate" value=p.date)
+                      td
+                        input#updateDate(type="text" disabled name="updateDate" value=p.update)
+                      td
+                        input#uid(type="text" hidden name="uid" value=p.uid)
                     
                       
 
