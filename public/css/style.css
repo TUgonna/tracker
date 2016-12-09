@@ -5,7 +5,9 @@ body {
     background: -o-linear-gradient(left, #c3dbe5, #c4edff); 
     background: -moz-linear-gradient(left, #c3dbe5, #c4edff); 
     background: linear-gradient(left, #c3dbe5, #c4edff);
+    zoom:70%;
 }
+
 
 header .col-md-12 {
 	height: auto;
