@@ -404,6 +404,6 @@ a{
 	border: 1px groove white;
 }
 
-#updateForm tr{
-	width:90px; !important
+#updateForm {
+	width:50%;
 }

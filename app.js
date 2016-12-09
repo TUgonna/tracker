@@ -60,7 +60,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 
-
+function randomString() {
+  var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+  var string_length = 8;
+  var randomstring = '';
+  for (var i=0; i<string_length; i++) {
+    var rnum = Math.floor(Math.random() * chars.length);
+    randomstring += chars.substring(rnum,rnum+1);
+  }
+  return randomstring;
+}
 
 
 function requireLogin(req, res, next) {
@@ -123,12 +132,41 @@ var body = req.body;
   prior:body.issuePriority,
   dept:body.issueDept,
   date: currentDate,
-  update: currentDate
+  update: currentDate,
+  tktid: randomString()
   };
    var x=ref.push(param).key;
     
-    res.send(x);
-  // res.redirect('/dashboard');
+  res.redirect('/dashboard');
+
+});
+
+app.post('/update', function(req, res, next) {
+  var fullDate = new Date();
+
+var twoDigitMonth = ((fullDate.getMonth().length+1) === 1)? (fullDate.getMonth()+1) : '0' + (fullDate.getMonth()+1);
+ 
+var currentDate = fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear();
+
+var body = req.body;
+  var param = {
+    user: req.session['user'],
+  status: "resolved",
+  desc:body.issueDesc,
+  prior:body.issuePriority,
+  dept:body.issueDept,
+  date: currentDate,
+  tktid:"hWJywl7w",
+  update: currentDate
+  };
+  var newPostKey = firebase.database().ref().child('tickets').push().key;
+
+  // Write the new post's data simultaneously in the posts list and the user's post list.
+  var updates = {};
+  updates['/tickets/' + newPostKey] = postData;
+  updates['/status/' + tktid + '/' + newPostKey] = postData;
+
+  return firebase.database().ref().update(updates);
 
 });
 
